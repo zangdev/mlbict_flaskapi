@@ -6,7 +6,6 @@ import time
 import numpy as np
 import pandas as pd
 import requests
-import tensorflow
 from keras.models import load_model
 from keras.models import save_model
 from sklearn.preprocessing import MinMaxScaler
