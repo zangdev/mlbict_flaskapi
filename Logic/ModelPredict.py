@@ -361,7 +361,7 @@ class ModelPredict:
             signal = "Buy"
         else:
             signal = "Sell"
-        return signal
+        return signal, self.df_dict
 
     def train_model(self, X_train, y_train, epochs=100, batch_size=32):
         self.model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
@@ -383,11 +383,12 @@ def check_consecutive_signals(signal):
 if __name__ == "__main__":
     model = ModelPredict()
     while True:
-        signal = model.run()
+        signal,  df_2 = model.run()
         if global_signal is None:
             global_signal = signal
             print(time.strftime('%Y-%m-%d %H:%M:%S'))
             print("Signal: ", signal)
+            print(df_2)
             print()
             # predictor.write_data_to_file("history_signal.txt", time.strftime('%Y-%m-%d %H:%M:%S'))
             # predictor.write_data_to_file("history_signal.txt", "Signal:" + signal)
