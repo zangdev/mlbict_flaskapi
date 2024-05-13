@@ -335,22 +335,32 @@ class ModelPredict:
         X_train, y_train = np.array(X_train), np.array(y_train)
         X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
 
-        # Xây dựng và huấn luyện mô hình
-        if os.path.exists(f"../{name_mlbict}.h5"):
-            print("Predicteding ....")
-            self.model.build_model(input_shape=(X_train.shape[1], X_train.shape[2]))
-            predicted_price = self.model.predict(X_train[-1].reshape(1, X_train.shape[1], X_train.shape[2]))
-            last_scaled_data_row = scaled_data[-1]
-            last_scaled_data_first_column = last_scaled_data_row[0]
-            print("Predicteding Completed!")
-            if last_scaled_data_first_column < predicted_price:
-                signal = "Buy"
-            else:
-                signal = "Sell"
+        # # Xây dựng và huấn luyện mô hình
+        # if os.path.exists(f"../{name_mlbict}.h5"):
+        #     print("Predicteding ....")
+        #     self.model.build_model(input_shape=(X_train.shape[1], X_train.shape[2]))
+        #     predicted_price = self.model.predict(X_train[-1].reshape(1, X_train.shape[1], X_train.shape[2]))
+        #     last_scaled_data_row = scaled_data[-1]
+        #     last_scaled_data_first_column = last_scaled_data_row[0]
+        #     print("Predicteding Completed!")
+        #     if last_scaled_data_first_column < predicted_price:
+        #         signal = "Buy"
+        #     else:
+        #         signal = "Sell"
+        # else:
+        #     self.model.build_model(input_shape=(X_train.shape[1], X_train.shape[2]))
+        #     self.model.train_model(X_train, y_train, epochs, batch_size)
+        #     signal = "Hold"
+        print("Predicteding ....")
+        self.model.build_model(input_shape=(X_train.shape[1], X_train.shape[2]))
+        predicted_price = self.model.predict(X_train[-1].reshape(1, X_train.shape[1], X_train.shape[2]))
+        last_scaled_data_row = scaled_data[-1]
+        last_scaled_data_first_column = last_scaled_data_row[0]
+        print("Predicteding Completed!")
+        if last_scaled_data_first_column < predicted_price:
+            signal = "Buy"
         else:
-            self.model.build_model(input_shape=(X_train.shape[1], X_train.shape[2]))
-            self.model.train_model(X_train, y_train, epochs, batch_size)
-            signal = "Hold"
+            signal = "Sell"
         return signal
 
     def train_model(self, X_train, y_train, epochs=100, batch_size=32):
