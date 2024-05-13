@@ -9,9 +9,8 @@ app = FastAPI()
 @app.get("/get_signal")
 def get_data():
     model = ModelPredict()
-    signal, df = model.run()
+    signal = model.run()
     return {
         "time": time.strftime('%Y-%m-%d %H:%M:%S'),
-        "signal": signal,
-        "data_predict": df
+        "signal": signal
     }

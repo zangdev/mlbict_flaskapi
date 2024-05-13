@@ -361,7 +361,7 @@ class ModelPredict:
             signal = "Buy"
         else:
             signal = "Sell"
-        return signal, self.df_dict
+        return signal
 
     def train_model(self, X_train, y_train, epochs=100, batch_size=32):
         self.model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
