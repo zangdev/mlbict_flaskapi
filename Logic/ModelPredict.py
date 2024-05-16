@@ -15,7 +15,7 @@ from keras.layers import LSTM, Dense, Dropout
 global_signal = None
 signal_history = []
 name_mlbict = "mlbict_1m_150K_candle"
-backtrack = 0
+backtrack = 10
 candle = 150000
 
 
@@ -23,6 +23,7 @@ class Model:
 
     def __init__(self):
         self.model = None
+        self.scaler = MinMaxScaler(feature_range=(-1, 1))
 
     def build_model(self, input_shape):
         if os.path.exists(f"{name_mlbict}.h5"):
@@ -47,9 +48,12 @@ class Model:
             print("New model created!")
 
     def preprocess_data(self, df):
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_data = scaler.fit_transform(df)
+        scaled_data = self.scaler.fit_transform(df)
         return scaled_data
+
+    def inverse_transform(self, scaled_data):
+        original_data = self.scaler.inverse_transform(scaled_data)
+        return original_data
 
     def train_model(self, X_train, y_train, epochs=100, batch_size=32):
         print("Train Model ...")
@@ -58,6 +62,7 @@ class Model:
         print("Model Trained successfully! And saved model successfully!")
 
     def predict(self, X):
+        print("Predict Model ...")
         predict_data = self.model.predict(X)
         return predict_data
 
@@ -128,7 +133,7 @@ class Model:
             raise ValueError("Invalid indicator type")
 
         # Thêm các thông số cần thiết vào URL
-        API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjYwYzAxMGRmNWFmOTRlZWNlYTBjOGEyIiwiaWF0IjoxNzE1MjMxMjkwLCJleHAiOjMzMjE5Njk1MjkwfQ.5eizojFZBSJzJVJqEbnAjmwHPXyyBUiWd7RXuBJd2YY"
+        API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjY0NWMzYWNmNWFmOTRlZWNlOWI4ZTE0IiwiaWF0IjoxNzE1ODQ4MTczLCJleHAiOjMzMjIwMzEyMTczfQ.m8hlXdtBk8do4fiEw9LkTm7acKMhHpu5SyTdMXvktcE"
         url += f"secret={API_KEY}&exchange=binance&symbol={symbols}&interval={interval}"
         if tail_url != "":
             if backtrack != 0:
@@ -357,6 +362,7 @@ class ModelPredict:
         last_scaled_data_row = scaled_data[-1]
         last_scaled_data_first_column = last_scaled_data_row[0]
         print("Predicteding Completed!")
+        print("Price Scale:", predicted_price)
         if last_scaled_data_first_column < predicted_price:
             signal = "Buy"
         else:
@@ -383,12 +389,12 @@ def check_consecutive_signals(signal):
 if __name__ == "__main__":
     model = ModelPredict()
     while True:
-        signal,  df_2 = model.run()
+        signal = model.run()
         if global_signal is None:
             global_signal = signal
             print(time.strftime('%Y-%m-%d %H:%M:%S'))
             print("Signal: ", signal)
-            print(df_2)
+
             print()
             # predictor.write_data_to_file("history_signal.txt", time.strftime('%Y-%m-%d %H:%M:%S'))
             # predictor.write_data_to_file("history_signal.txt", "Signal:" + signal)
