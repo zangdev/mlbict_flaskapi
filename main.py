@@ -11,6 +11,7 @@ def get_data():
     model = ModelPredict()
     signal = model.run()
     return {
+        "model": "mlbict 2.0.0",
         "time": time.strftime('%Y-%m-%d %H:%M:%S'),
         "signal": signal
     }
